@@ -5,34 +5,30 @@ import TerserPlugin from 'terser-webpack-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 
 export const prodConfig: webpack.Configuration = merge(baseConfig, {
-    module: {
-        rules: [
-            {
-                test: /\.jsx?$/,
-                enforce: 'pre',
-                exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'webpack-strip-block',
-                        options: {
-                            start: 'development-only-start',
-                            end: 'development-only-end',
-                        },
-                    },
-                ],
-            },
+  module: {
+    rules: [
+      {
+        test: /\.[jt]sx?$/,
+        enforce: 'pre',
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'webpack-strip-block',
+          },
         ],
-    },
-    optimization: {
-        minimizer: [
-            new TerserPlugin({
-                extractComments: false,
-            }),
-            new CssMinimizerPlugin(),
-        ],
-    },
-    performance: {
-        maxEntrypointSize: 4096000,
-        maxAssetSize: 1024000,
-    },
+      },
+    ],
+  },
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false,
+      }),
+      new CssMinimizerPlugin(),
+    ],
+  },
+  performance: {
+    maxEntrypointSize: 4096000,
+    maxAssetSize: 1024000,
+  },
 });

@@ -4,3 +4,4 @@
 /dist
 /.husky
 /build
+/*.config.[jt]s
