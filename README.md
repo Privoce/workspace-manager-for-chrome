@@ -1,33 +1,35 @@
-# Webpack Boilerplate
+# workspace-manager-for-chrome
 
-A webpack 5 boilerplate with support of React, TypeScript, HMR, Chrome Extension Development, etc.
+A simple demo Chrome extension that utilizes the functionality of *workspace-api-for-chrome* (
+see [GitHub](https://github.com/Privoce/workspace-api-for-chrome)
+or [npm](https://www.npmjs.com/package/workspace-api-for-chrome)).
 
-## To use
+## How to use
 
 Install dependencies:
 
 ```shell
+npm install
+# or
 yarn install
 ```
 
-Start development server:
+Build project:
 
 ```shell
-yarn run start
-```
-
-Build bundle for production:
-
-```shell
+npm run build
+# or
 yarn run build
 ```
 
-## Configure webpack entries
+Enabled *developer mode* in [chrome://extensions/](chrome://extensions/) and load the built folder.
 
-The configuration of webpack entries is located at `build/config/webpack.config.base.ts`, which is a typical [webpack configuration file](https://webpack.js.org/configuration/).
+## For developers
 
-## HMR/Auto-reload for Chrome Extension Development
+Start dev-server:
 
-To facilitate development of Chrome extensions, this boilerplate supports HMR (Hot Module Replacement) for background scripts and auto-reload for content scripts.
-
-To enable this feature, remember to edit the configuration at `build/config/user.config.ts` and put the corresponding webpack chunk names in `userConfig.devServer.crxContentScriptsChunks` and `userConfig.devServer.crxBackgroundScriptsChunks`.
+```shell
+npm run start
+# or
+yarn run start
+```
