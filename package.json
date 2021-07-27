@@ -105,7 +105,8 @@
     "webpack-hot-middleware": "^2.25.0",
     "webpack-merge": "^5.8.0",
     "webpack-strip-block": "^0.3.0",
-    "webpackbar": "^5.0.0-3"
+    "webpackbar": "^5.0.0-3",
+    "workspace-api-for-chrome": "^2.0.1"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

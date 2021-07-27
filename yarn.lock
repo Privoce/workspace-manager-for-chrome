@@ -1539,6 +1539,14 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/chrome@^0.0.145":
+  version "0.0.145"
+  resolved "https://registry.yarnpkg.com/@types/chrome/-/chrome-0.0.145.tgz#6c53ae0af5f25350b07bfd24cf459b5fe65cd9b8"
+  integrity sha512-vLvTMmfc8mvwOZzkmn2UwlWSNu0t0txBkyuIv8NgihRkvFCe6XJX65YZAgAP/RdBit3enhU2GTxCr+prn4uZmA==
+  dependencies:
+    "@types/filesystem" "*"
+    "@types/har-format" "*"
+
 "@types/chrome@^0.0.147":
   version "0.0.147"
   resolved "https://registry.yarnpkg.com/@types/chrome/-/chrome-0.0.147.tgz#c0658b59e0707fc1dc348bbd065d1ca3583133ee"
@@ -8218,6 +8226,13 @@ word-wrap@^1.2.3:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.3.tgz#610636f6b1f703891bd34771ccb17fb93b47079c"
   integrity sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==
+
+workspace-api-for-chrome@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/workspace-api-for-chrome/-/workspace-api-for-chrome-2.0.1.tgz#676e12de81711291766d40a7d2cae97bc07181c6"
+  integrity sha512-NqsQ4L/iUXN+o4E31+xGJBNHRcUfSMk79xO95Upr2BLL/RbJ8/WmP/vgs75wkmOccilLU72YDVpvCXDz/iN5Rg==
+  dependencies:
+    "@types/chrome" "^0.0.145"
 
 wrap-ansi@^6.2.0:
   version "6.2.0"
