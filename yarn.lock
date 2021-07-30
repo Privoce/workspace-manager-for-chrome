@@ -8227,10 +8227,10 @@ word-wrap@^1.2.3:
   resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.3.tgz#610636f6b1f703891bd34771ccb17fb93b47079c"
   integrity sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==
 
-workspace-api-for-chrome@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/workspace-api-for-chrome/-/workspace-api-for-chrome-2.0.2.tgz#cc09ff996f48bb8a8c547c99d99444f42f122529"
-  integrity sha512-EO+D132dmKMa5MljjXssMphhiCDajHqXykQYfAnce2XxMLpRnS+2YR3mGbyx3TIyN2RDFe+Ros+gPPJgMZUF2A==
+workspace-api-for-chrome@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/workspace-api-for-chrome/-/workspace-api-for-chrome-2.2.1.tgz#7431dd06f4865b77d8b57d0a9f43dfa964ea2c4a"
+  integrity sha512-9HLPolTNuk/5VdBoBvOxNJQM7uyPYWm1YeV8ctwM/9rGbH1kdJQTShyKbFn2fYIRzdikrz96BkGT8ZNzjuDwyQ==
   dependencies:
     "@types/chrome" "^0.0.145"
 
