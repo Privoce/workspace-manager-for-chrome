@@ -1,5 +1,5 @@
-/.idea
-/node_modules
-/.awcache
-/dist
-/*.log
+.idea
+node_modules
+.awcache
+dist
+*.log

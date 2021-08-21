@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Alert, Button, Card, Col, Form, Row, Space } from 'antd';
-import Workspace from 'workspace-api-for-chrome';
+import Workspace from 'packages/workspace-api-for-chrome/src';
 
 import style from './index.module.less';
 import { action, makeObservable, observable } from 'mobx';

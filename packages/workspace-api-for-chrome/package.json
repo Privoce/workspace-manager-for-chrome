@@ -1,0 +1,48 @@
+{
+  "name": "workspace-api-for-chrome",
+  "version": "2.2.1",
+  "description": "Provide workspace management ability for Chrome",
+  "author": "tomzhu1024",
+  "repository": "https://github.com/Privoce/workspace-api-for-chrome",
+  "license": "ISC",
+  "keywords": [
+    "chrome",
+    "tab",
+    "workspace"
+  ],
+  "files": [
+    "lib/**/*",
+    "README.md"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "dependencies": {
+    "@types/chrome": "^0.0.145"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^12.1.4",
+    "@typescript-eslint/eslint-plugin": "^4.26.1",
+    "@typescript-eslint/parser": "^4.26.1",
+    "commitlint-config-gitmoji": "^2.2.5",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "lint-staged": "^11.0.0",
+    "prettier": "^2.3.1",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.2"
+  },
+  "scripts": {
+    "prepare": "npx husky install",
+    "prepack": "npm run build",
+    "build": "npx tsc",
+    "lint": "npx eslint src/**/*.{js,jsx,ts,tsx}",
+    "lint-fix": "npx eslint --fix src/**/*.{js,jsx,ts,tsx}",
+    "test-algo": "npx ts-node tests/algo.ts"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ]
+  }
+}
