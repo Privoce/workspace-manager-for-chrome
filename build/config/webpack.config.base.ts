@@ -142,6 +142,7 @@ export const baseConfig: webpack.Configuration = {
   resolve: {
     alias: {
       '@': path.resolve(userConfig.projectRoot, 'src'),
+      'packages': path.resolve(userConfig.projectRoot, 'packages'),
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
   },
