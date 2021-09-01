@@ -24,11 +24,8 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "packages/*": [
-        "./packages/*"
       ]
-    }
+    },
   },
   "include": [
     "src/**/*"

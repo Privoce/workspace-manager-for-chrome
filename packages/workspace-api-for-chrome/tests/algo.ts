@@ -1,4 +1,4 @@
-import { ModificationStepsSolver, ISrcItem, IDstItem } from '../src/services/algo';
+import { ModificationStepsSolver, ISrcItem, IDstItem } from '../src/services/modificationStepsSolver';
 
 const mss = new ModificationStepsSolver<number, string>();
 

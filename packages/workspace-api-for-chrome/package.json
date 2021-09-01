@@ -1,9 +1,9 @@
 {
   "name": "workspace-api-for-chrome",
-  "version": "2.2.1",
-  "description": "Provide workspace management ability for Chrome",
+  "version": "2.3.0",
+  "description": "Treat a browser window as a workspace, and synchronize between workspaces.",
   "author": "tomzhu1024",
-  "repository": "https://github.com/Privoce/workspace-api-for-chrome",
+  "repository": "https://github.com/Privoce/workspace-manager-for-chrome/tree/main/packages/workspace-api-for-chrome",
   "license": "ISC",
   "keywords": [
     "chrome",
@@ -11,6 +11,7 @@
     "workspace"
   ],
   "files": [
+    "src/**/*",
     "lib/**/*",
     "README.md"
   ],
@@ -37,8 +38,7 @@
     "prepack": "npm run build",
     "build": "npx tsc",
     "lint": "npx eslint src/**/*.{js,jsx,ts,tsx}",
-    "lint-fix": "npx eslint --fix src/**/*.{js,jsx,ts,tsx}",
-    "test-algo": "npx ts-node tests/algo.ts"
+    "lint-fix": "npx eslint --fix src/**/*.{js,jsx,ts,tsx}"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

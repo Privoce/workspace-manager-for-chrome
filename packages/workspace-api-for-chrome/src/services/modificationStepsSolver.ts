@@ -1,7 +1,3 @@
-/**
- * Type Definitions
- */
-
 export type ISrcItem<I, C> = {
   id: I;
   content: C;
@@ -11,40 +7,40 @@ export type IDstItem<C> = {
   content: C;
 };
 
-export type ISrcIndex = {
+type IWithSrcIndex = {
   srcIndex: number;
 };
 
-export type IDstIndex = {
+type IWithDstIndex = {
   dstIndex: number;
 };
 
-export type IComparisonResult<I, C> = {
-  srcOnly: (ISrcItem<I, C> & ISrcIndex)[];
-  dstOnly: (IDstItem<C> & IDstIndex)[];
-  both: (ISrcItem<I, C> & ISrcIndex & IDstIndex)[];
+type IComparisonResult<I, C> = {
+  srcOnly: (ISrcItem<I, C> & IWithSrcIndex)[];
+  dstOnly: (IDstItem<C> & IWithDstIndex)[];
+  both: (ISrcItem<I, C> & IWithSrcIndex & IWithDstIndex)[];
 };
 
-export type IRemovalStep<I> = {
+type IRemovalStep<I> = {
   id: I;
 };
 
-export type IMovingStep<I> = {
+type IMovingStep<I> = {
   id: I;
   index: number;
 };
 
-export type IUpdatingStep<I, C> = {
+type IUpdatingStep<I, C> = {
   id: I;
   content: C;
 };
 
-export type ICreationStep<C> = {
+type ICreationStep<C> = {
   content: C;
   index: number;
 };
 
-export type IModificationSteps<I, C> = {
+type IModificationSteps<I, C> = {
   removalSteps: IRemovalStep<I>[];
   movingSteps: IMovingStep<I>[];
   updatingSteps: IUpdatingStep<I, C>[];
@@ -52,7 +48,7 @@ export type IModificationSteps<I, C> = {
 };
 
 export class ModificationStepsSolver<I, C> {
-  public compareLists = (src: ISrcItem<I, C>[], dst: IDstItem<C>[]): IComparisonResult<I, C> => {
+  private compareLists = (src: ISrcItem<I, C>[], dst: IDstItem<C>[]): IComparisonResult<I, C> => {
     const result: IComparisonResult<I, C> = {
       srcOnly: [],
       dstOnly: [],

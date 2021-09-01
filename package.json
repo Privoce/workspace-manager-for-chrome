@@ -115,5 +115,8 @@
     "*.{css,sass,scss,less}": [
       "stylelint --fix"
     ]
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

@@ -1,205 +1,123 @@
-/**
- * Type Definitions
- */
+import { IDstItem, ISrcItem, ModificationStepsSolver } from '../services/modificationStepsSolver';
+import { WebNavUrlCache } from '../services/webNavUrlCache';
+import { TabUrlUpdateCache } from '../services/tabUrlUpdateCache';
+import { activateTab, checkEnv, createTab, moveTab, queryAllTabsInWindow, removeTab } from '../services/utils';
 
-import { IDstItem, ISrcItem, ModificationStepsSolver } from '../services/algo';
-
-export enum TabEvent {
-  onActivated,
-  onAttached,
-  onCreated,
-  onDetached,
-  onHighlighted,
-  onMoved,
-  onRemoved,
-  onUpdated,
+export enum ITabEvent {
+  OnActivated,
+  OnAttached,
+  OnCreated,
+  OnDetached,
+  OnHighlighted,
+  OnMoved,
+  OnRemoved,
+  OnUpdated,
 }
 
-export type EventHandlerParams =
+export type IEventHandlerParams =
   | {
-      event: TabEvent.onActivated;
+      event: ITabEvent.OnActivated;
       rawParams: { activeInfo: chrome.tabs.TabActiveInfo };
     }
   | {
-      event: TabEvent.onAttached;
+      event: ITabEvent.OnAttached;
       rawParams: { tabId: number; attachInfo: chrome.tabs.TabAttachInfo };
     }
   | {
-      event: TabEvent.onCreated;
+      event: ITabEvent.OnCreated;
       rawParams: { tab: chrome.tabs.Tab };
     }
   | {
-      event: TabEvent.onDetached;
+      event: ITabEvent.OnDetached;
       rawParams: { tabId: number; detachInfo: chrome.tabs.TabDetachInfo };
     }
   | {
-      event: TabEvent.onHighlighted;
+      event: ITabEvent.OnHighlighted;
       rawParams: { highlightInfo: chrome.tabs.TabHighlightInfo };
     }
   | {
-      event: TabEvent.onMoved;
+      event: ITabEvent.OnMoved;
       rawParams: { tabId: number; moveInfo: chrome.tabs.TabMoveInfo };
     }
   | {
-      event: TabEvent.onRemoved;
+      event: ITabEvent.OnRemoved;
       rawParams: { tabId: number; removeInfo: chrome.tabs.TabRemoveInfo };
     }
   | {
-      event: TabEvent.onUpdated;
+      event: ITabEvent.OnUpdated;
       rawParams: { tabId: number; changeInfo: chrome.tabs.TabChangeInfo; tab: chrome.tabs.Tab };
     };
 
-export type EventHandler = (params: EventHandlerParams) => void;
+export type IEventHandler = (params: IEventHandlerParams) => void;
 
-export type Tab = {
+export type ITab = {
   url: string;
 };
 
-export type RawTab = chrome.tabs.Tab;
-
-export type Data = {
+export type IData = {
   activeTabIndex: number;
-  tabs: Tab[];
+  tabs: ITab[];
 };
 
-export type OptionalData = {
+export type IDataWithOptionalFields = {
   activeTabIndex?: number;
-  tabs?: Tab[];
+  tabs?: ITab[];
 };
 
-export type RawData = {
-  tabs: RawTab[];
+export type IRawData = {
+  tabs: chrome.tabs.Tab[];
 };
 
-export type TabFeatures = {
+export type ITabFeatures = {
   url: string;
 };
 
-/**
- * Utilities
- */
-
-const checkEnv = () => {
-  if (typeof chrome === 'undefined') {
-    throw new ReferenceError('chrome is not defined, make sure you are using this package within a chrome environment');
-  }
-  if (typeof chrome.tabs === 'undefined') {
-    throw new ReferenceError(
-      'chrome.tab is not defined, make sure you are using this package with a chrome extension environment'
-    );
-  }
+export type WorkspaceOptions = {
+  webNavEndDelay?: number;
+  tabUrlCacheDepth?: number;
 };
 
-const queryAllTabs = async (windowId: number): Promise<RawTab[]> => {
-  return await new Promise<RawTab[]>((resolve) => {
-    chrome.tabs.query({ windowId }, resolve);
-  });
-};
-
-const rawTab2Tab = (rawTab: RawTab): Tab => ({
-  url: rawTab.url || '',
-});
-
-const removeTab = async (id: number): Promise<void> => {
-  await new Promise<void>((resolve) => {
-    chrome.tabs.remove(id, resolve);
-  });
-};
-
-const moveTab = async (id: number, index: number): Promise<void> => {
-  await new Promise<void>((resolve) => {
-    chrome.tabs.move(
-      id,
-      {
-        index,
-      },
-      () => {
-        resolve();
-      }
-    );
-  });
-};
-
-const updateTab = async (id: number, url: string): Promise<void> => {
-  await new Promise<void>((resolve) => {
-    chrome.tabs.update(
-      id,
-      {
-        url,
-      },
-      () => {
-        resolve();
-      }
-    );
-  });
-};
-
-const createTab = async (windowId: number, index: number, url: string): Promise<void> => {
-  await new Promise<void>((resolve) => {
-    chrome.tabs.create(
-      {
-        windowId,
-        index,
-        url,
-        active: false,
-      },
-      () => {
-        resolve();
-      }
-    );
-  });
-};
-
-const activateTab = async (windowId: number, index: number): Promise<void> => {
-  const allTabs = await queryAllTabs(windowId);
-  await new Promise<void>((resolve) => {
-    chrome.tabs.update(
-      typeof allTabs[index]?.id !== 'undefined' ? (allTabs[index]?.id as number) : -1,
-      {
-        active: true,
-      },
-      () => {
-        resolve();
-      }
-    );
-  });
-};
-
-const stringifyTabFeatures = (tabFeatures: TabFeatures): string => {
+const stringifyTabFeatures = (tabFeatures: ITabFeatures): string => {
   return JSON.stringify(tabFeatures);
 };
 
-const parseTabFeatures = (tabFeatures: string): TabFeatures => {
+const parseTabFeatures = (tabFeatures: string): ITabFeatures => {
   return JSON.parse(tabFeatures);
 };
 
 export class Workspace {
-  private readonly verbose: boolean;
   private readonly windowId: number;
-  private eventHandlers: Array<(params: EventHandlerParams) => void>;
-  private isOperating: boolean;
+  private readonly verbose: boolean;
+  private eventHandlers: Array<(params: IEventHandlerParams) => void>;
+  private isWriting: boolean;
+  private webNavUrlCache: WebNavUrlCache;
+  private tabUrlUpdateCache: TabUrlUpdateCache;
 
-  constructor(windowId: number, verbose = false) {
-    this.verbose = verbose;
+  constructor(windowId: number, options: WorkspaceOptions = {}, verbose = false) {
     checkEnv();
     this.windowId = windowId;
+    this.verbose = verbose;
     this.eventHandlers = [];
-    this.isOperating = false;
-    this.batchAddListeners();
+    this.isWriting = false;
+    this.addListeners();
+    this.webNavUrlCache = new WebNavUrlCache(options.webNavEndDelay || 1000, verbose);
+    this.tabUrlUpdateCache = new TabUrlUpdateCache(options.tabUrlCacheDepth || 1, verbose);
   }
 
   /**
-   * Clean-up all internal resources.
+   * Clean-up.
    */
   public destroy = (): void => {
-    this.batchRemoveListeners();
+    this.removeListeners();
+    this.webNavUrlCache.destroy();
+    this.tabUrlUpdateCache.destroy();
   };
 
   /**
    * Add a callback function to handle workspace events.
    * @param handlerToAdd callback function
    */
-  public addEventHandler = (handlerToAdd: EventHandler): void => {
+  public addEventHandler = (handlerToAdd: IEventHandler): void => {
     this.eventHandlers.push(handlerToAdd);
   };
 
@@ -207,27 +125,29 @@ export class Workspace {
    * Remove a callback function.
    * @param handlerToRemove callback function
    */
-  public removeEventHandler = (handlerToRemove: EventHandler): void => {
+  public removeEventHandler = (handlerToRemove: IEventHandler): void => {
     this.eventHandlers = this.eventHandlers.filter((handler) => handler !== handlerToRemove);
   };
 
   /**
    * Read workspace and return an object in compatible format.
    */
-  public read = async (): Promise<Data> => {
-    const tabs = await queryAllTabs(this.windowId);
+  public read = async (): Promise<IData> => {
+    const tabs = await queryAllTabsInWindow(this.windowId);
     const index = tabs.filter((tab) => tab.active)[0]?.index;
     return {
       activeTabIndex: typeof index !== 'undefined' ? index : -1,
-      tabs: tabs.map(rawTab2Tab),
+      tabs: tabs.map((rawTab) => ({
+        url: rawTab.url || '',
+      })),
     };
   };
 
   /**
    * Read workspace and return all its tabs.
    */
-  public readRaw = async (): Promise<RawData> => {
-    const tabs = await queryAllTabs(this.windowId);
+  public readRaw = async (): Promise<IRawData> => {
+    const tabs = await queryAllTabsInWindow(this.windowId);
     return {
       tabs,
     };
@@ -237,20 +157,32 @@ export class Workspace {
    * Accept an object in compatible format and update the workspace to aligned with it.
    * @param data workspace data
    */
-  public write = async (data: OptionalData): Promise<void> => {
-    this.isOperating = true;
+  public write = async (data: IDataWithOptionalFields): Promise<void> => {
+    this.isWriting = true;
     if (typeof data.tabs !== 'undefined') {
-      const src: ISrcItem<number, string>[] = (await queryAllTabs(this.windowId)).map((tab) => ({
+      const src: ISrcItem<number, string>[] = (await queryAllTabsInWindow(this.windowId)).map((tab) => ({
         id: typeof tab.id !== 'undefined' ? tab.id : -1,
-        content: stringifyTabFeatures({ url: tab.url || '' }),
+        content: stringifyTabFeatures({
+          url: tab.id !== undefined ? this.webNavUrlCache.getUrl(tab.id) : '',
+        }),
       }));
       const dst: IDstItem<string>[] = data.tabs.map((tab) => ({
-        content: stringifyTabFeatures({ url: tab.url || '' }),
+        content: stringifyTabFeatures({
+          url: tab.url,
+        }),
       }));
       const mss = new ModificationStepsSolver<number, string>();
       const steps = mss.getModificationSteps(src, dst);
       if (this.verbose) {
-        console.log(steps);
+        console.log(
+          '[✨ workspace-main] Source array:',
+          src.map((item) => item.content)
+        );
+        console.log(
+          '[✨ workspace-main] Destination array:',
+          dst.map((item) => item.content)
+        );
+        console.log('[✨ workspace-main] Solved modification steps:', steps);
       }
 
       for (let i = 0; i < steps.removalSteps.length; i++) {
@@ -260,7 +192,10 @@ export class Workspace {
         await moveTab(steps.movingSteps[i].id, steps.movingSteps[i].index);
       }
       for (let i = 0; i < steps.updatingSteps.length; i++) {
-        await updateTab(steps.updatingSteps[i].id, parseTabFeatures(steps.updatingSteps[i].content).url);
+        await this.tabUrlUpdateCache.updateUrl(
+          steps.updatingSteps[i].id,
+          parseTabFeatures(steps.updatingSteps[i].content).url
+        );
       }
       for (let i = 0; i < steps.creationSteps.length; i++) {
         await createTab(
@@ -273,68 +208,60 @@ export class Workspace {
     if (typeof data.activeTabIndex !== 'undefined') {
       await activateTab(this.windowId, data.activeTabIndex);
     }
-    this.isOperating = false;
+    this.isWriting = false;
   };
 
-  /**
-   * Internal Listeners
-   */
-
-  private onActivatedListener = (activeInfo) => {
-    if (!this.isOperating && this.eventHandlers.length !== 0 && activeInfo.windowId === this.windowId) {
-      this.eventHandlers.map((handler) => handler({ event: TabEvent.onActivated, rawParams: { activeInfo } }));
+  private onActivatedListener = (activeInfo): void => {
+    if (!this.isWriting && this.eventHandlers.length !== 0 && activeInfo.windowId === this.windowId) {
+      this.eventHandlers.map((handler) => handler({ event: ITabEvent.OnActivated, rawParams: { activeInfo } }));
     }
   };
 
-  private onAttachedListener = (tabId, attachInfo) => {
-    if (!this.isOperating && this.eventHandlers.length !== 0 && attachInfo.newWindowId === this.windowId) {
-      this.eventHandlers.map((handler) => handler({ event: TabEvent.onAttached, rawParams: { tabId, attachInfo } }));
+  private onAttachedListener = (tabId, attachInfo): void => {
+    if (!this.isWriting && this.eventHandlers.length !== 0 && attachInfo.newWindowId === this.windowId) {
+      this.eventHandlers.map((handler) => handler({ event: ITabEvent.OnAttached, rawParams: { tabId, attachInfo } }));
     }
   };
 
-  private onCreatedListener = (tab) => {
-    if (!this.isOperating && this.eventHandlers.length !== 0 && tab.windowId === this.windowId) {
-      this.eventHandlers.map((handler) => handler({ event: TabEvent.onCreated, rawParams: { tab } }));
+  private onCreatedListener = (tab): void => {
+    if (!this.isWriting && this.eventHandlers.length !== 0 && tab.windowId === this.windowId) {
+      this.eventHandlers.map((handler) => handler({ event: ITabEvent.OnCreated, rawParams: { tab } }));
     }
   };
 
-  private onDetachedListener = (tabId, detachInfo) => {
-    if (!this.isOperating && this.eventHandlers.length !== 0 && detachInfo.oldWindowId === this.windowId) {
-      this.eventHandlers.map((handler) => handler({ event: TabEvent.onDetached, rawParams: { tabId, detachInfo } }));
+  private onDetachedListener = (tabId, detachInfo): void => {
+    if (!this.isWriting && this.eventHandlers.length !== 0 && detachInfo.oldWindowId === this.windowId) {
+      this.eventHandlers.map((handler) => handler({ event: ITabEvent.OnDetached, rawParams: { tabId, detachInfo } }));
     }
   };
 
-  private onHighlightedListener = (highlightInfo) => {
-    if (!this.isOperating && this.eventHandlers.length !== 0 && highlightInfo.windowId === this.windowId) {
-      this.eventHandlers.map((handler) => handler({ event: TabEvent.onHighlighted, rawParams: { highlightInfo } }));
+  private onHighlightedListener = (highlightInfo): void => {
+    if (!this.isWriting && this.eventHandlers.length !== 0 && highlightInfo.windowId === this.windowId) {
+      this.eventHandlers.map((handler) => handler({ event: ITabEvent.OnHighlighted, rawParams: { highlightInfo } }));
     }
   };
 
-  private onMovedListener = (tabId, moveInfo) => {
-    if (!this.isOperating && this.eventHandlers.length !== 0 && moveInfo.windowId === this.windowId) {
-      this.eventHandlers.map((handler) => handler({ event: TabEvent.onMoved, rawParams: { tabId, moveInfo } }));
+  private onMovedListener = (tabId, moveInfo): void => {
+    if (!this.isWriting && this.eventHandlers.length !== 0 && moveInfo.windowId === this.windowId) {
+      this.eventHandlers.map((handler) => handler({ event: ITabEvent.OnMoved, rawParams: { tabId, moveInfo } }));
     }
   };
 
-  private onRemovedListener = (tabId, removeInfo) => {
-    if (!this.isOperating && this.eventHandlers.length !== 0 && removeInfo.windowId === this.windowId) {
-      this.eventHandlers.map((handler) => handler({ event: TabEvent.onRemoved, rawParams: { tabId, removeInfo } }));
+  private onRemovedListener = (tabId, removeInfo): void => {
+    if (!this.isWriting && this.eventHandlers.length !== 0 && removeInfo.windowId === this.windowId) {
+      this.eventHandlers.map((handler) => handler({ event: ITabEvent.OnRemoved, rawParams: { tabId, removeInfo } }));
     }
   };
 
-  private onUpdatedListener = (tabId, changeInfo, tab) => {
-    if (!this.isOperating && this.eventHandlers.length !== 0 && tab.windowId === this.windowId) {
+  private onUpdatedListener = (tabId, changeInfo, tab): void => {
+    if (!this.isWriting && this.eventHandlers.length !== 0 && tab.windowId === this.windowId) {
       this.eventHandlers.map((handler) =>
-        handler({ event: TabEvent.onUpdated, rawParams: { tabId, changeInfo, tab } })
+        handler({ event: ITabEvent.OnUpdated, rawParams: { tabId, changeInfo, tab } })
       );
     }
   };
 
-  /**
-   * Batch Listener Operations
-   */
-
-  private batchAddListeners = () => {
+  private addListeners = (): void => {
     chrome.tabs.onActivated.addListener(this.onActivatedListener);
     chrome.tabs.onAttached.addListener(this.onAttachedListener);
     chrome.tabs.onCreated.addListener(this.onCreatedListener);
@@ -345,7 +272,7 @@ export class Workspace {
     chrome.tabs.onUpdated.addListener(this.onUpdatedListener);
   };
 
-  private batchRemoveListeners = () => {
+  private removeListeners = (): void => {
     chrome.tabs.onActivated.removeListener(this.onActivatedListener);
     chrome.tabs.onAttached.removeListener(this.onAttachedListener);
     chrome.tabs.onCreated.removeListener(this.onCreatedListener);

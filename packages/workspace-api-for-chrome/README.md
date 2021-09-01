@@ -14,6 +14,15 @@ npm add workspace-api-for-chrome
 yarn add workspace-api-for-chrome
 ```
 
+Remember to declare the following permissions in `manifest.json`:
+
+```json lines
+"permissions": [
+    "tabs",
+    "webNavigation"
+]
+```
+
 ## API
 
 Import and initialize an instance (note that the creation of the window should be done separately and beforehand):
@@ -21,11 +30,25 @@ Import and initialize an instance (note that the creation of the window should b
 ```typescript
 import Workspace from 'workspace-api-for-chrome';
 // suppose a window is created,
-// and its id is stored in `windowId`
+// and its ID is stored in `windowId`
 const workspace = new Workspace(windowId);
+// if you want to control more advanced options
+const workspace = new Workspace(windowId, { webNavEndDelay: 1000, tabUrlCacheDepth: 1 });
 // also, if you want to enable logging
-const workspace = new Workspace(windowId, true);
+const workspace = new Workspace(windowId, {}, true);
 ```
+
+The second parameter is an object with the following scheme:
+
+```typescript
+type WorkspaceOptions = {
+  webNavEndDelay?: number;
+  tabUrlCacheDepth?: number;
+}
+```
+
+- `webNavEndDelay` is the milliseconds to wait before a *web navigation* is considered completed.
+- `tabUrlCacheDepth` means how many URLs that are previously written to a tab should be recorded for duplication check.
 
 ### read()
 
@@ -126,7 +149,7 @@ type EventHandler = (params: EventHandlerParams) => void;
 
 ### destroy()
 
-Remove all internal listeners. Use it when you are ready to destroy the workspace instance.
+Remove all internal listeners. Use it when you will no longer use the workspace instance.
 
 ```typescript
 workspace.destroy();
@@ -135,50 +158,50 @@ workspace.destroy();
 ## Type Definitions
 
 ```typescript
-enum TabEvent {
-  onActivated,
-  onAttached,
-  onCreated,
-  onDetached,
-  onHighlighted,
-  onMoved,
-  onRemoved,
-  onUpdated,
+enum ITabEvent {
+  OnActivated,
+  OnAttached,
+  OnCreated,
+  OnDetached,
+  OnHighlighted,
+  OnMoved,
+  OnRemoved,
+  OnUpdated,
 }
 ```
 
 ```typescript
-type EventHandlerParams =
+type IEventHandlerParams =
   | {
-      event: TabEvent.onActivated;
+      event: TabEvent.OnActivated;
       rawParams: { activeInfo: chrome.tabs.TabActiveInfo };
     }
   | {
-      event: TabEvent.onAttached;
+      event: TabEvent.OnAttached;
       rawParams: { tabId: number; attachInfo: chrome.tabs.TabAttachInfo };
     }
   | {
-      event: TabEvent.onCreated;
+      event: TabEvent.OnCreated;
       rawParams: { tab: chrome.tabs.Tab };
     }
   | {
-      event: TabEvent.onDetached;
+      event: TabEvent.OnDetached;
       rawParams: { tabId: number; detachInfo: chrome.tabs.TabDetachInfo };
     }
   | {
-      event: TabEvent.onHighlighted;
+      event: TabEvent.OnHighlighted;
       rawParams: { highlightInfo: chrome.tabs.TabHighlightInfo };
     }
   | {
-      event: TabEvent.onMoved;
+      event: TabEvent.OnMoved;
       rawParams: { tabId: number; moveInfo: chrome.tabs.TabMoveInfo };
     }
   | {
-      event: TabEvent.onRemoved;
+      event: TabEvent.OnRemoved;
       rawParams: { tabId: number; removeInfo: chrome.tabs.TabRemoveInfo };
     }
   | {
-      event: TabEvent.onUpdated;
+      event: TabEvent.OnUpdated;
       rawParams: { tabId: number; changeInfo: chrome.tabs.TabChangeInfo; tab: chrome.tabs.Tab };
     };
 ```

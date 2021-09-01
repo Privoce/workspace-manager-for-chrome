@@ -1,5 +1,4 @@
-import { Workspace } from './apis/workspace';
-import { TabEvent } from './apis/workspace';
+import { Workspace, ITabEvent } from './apis/workspace';
 
-export { TabEvent };
+export { ITabEvent };
 export default Workspace;
