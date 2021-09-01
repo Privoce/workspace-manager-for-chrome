@@ -1,6 +1,6 @@
 {
   "name": "workspace-api-for-chrome",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Treat a browser window as a workspace, and synchronize between workspaces.",
   "author": "tomzhu1024",
   "repository": "https://github.com/Privoce/workspace-manager-for-chrome/tree/main/packages/workspace-api-for-chrome",
@@ -34,7 +34,6 @@
     "typescript": "^4.3.2"
   },
   "scripts": {
-    "prepare": "npx husky install",
     "prepack": "npm run build",
     "build": "npx tsc",
     "lint": "npx eslint src/**/*.{js,jsx,ts,tsx}",

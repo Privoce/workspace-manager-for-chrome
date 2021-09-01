@@ -60,15 +60,15 @@ const data = await workspace.read();
 
 ![](./docs/read.png)
 
-#### Return Value
+#### Return Value Type
 
 ```typescript
-type Data = {
+{
   activeTabIndex: number;
   tabs: {
     url: string;
   }[];
-};
+}
 ```
 
 ### readRaw()
@@ -81,12 +81,12 @@ const rawData = await workspace.readRaw();
 
 ![](./docs/read-raw.png)
 
-#### Return Value
+#### Return Value Type
 
 ```typescript
-type RawData = {
+{
   tabs: chrome.tabs.Tab[];
-};
+}
 ```
 
 ### write()
@@ -100,15 +100,15 @@ will not be synchronized.
 await workspace.write(data);
 ```
 
-#### Parameter: *data*
+#### Parameter Type: *data*
 
 ```typescript
-type OptionalData = {
+{
   activeTabIndex?: number;
   tabs?: {
     url: string;
   }[];
-};
+}
 ```
 
 ### addEventListener()
@@ -123,10 +123,10 @@ const callbackFn = (params) => {
 workspace.addEventHandler(callbackFn);
 ```
 
-#### Parameter: *handlerToAdd*
+#### Parameter Type: *handlerToAdd*
 
 ```typescript
-type EventHandler = (params: EventHandlerParams) => void;
+(params: EventHandlerParams) => void
 ```
 
 *Note:* see [Type Definitions](#type-definitions) for detailed type definitions.
@@ -139,10 +139,10 @@ Remove callback function that handles events within the workspace.
 workspace.removeEventHandler(callbackFn);
 ```
 
-#### Parameter: *handlerToRemove*
+#### Parameter Type: *handlerToRemove*
 
 ```typescript
-type EventHandler = (params: EventHandlerParams) => void;
+(params: IEventHandlerParams) => void
 ```
 
 *Note:* see [Type Definitions](#type-definitions) for detailed type definitions.
@@ -173,35 +173,35 @@ enum ITabEvent {
 ```typescript
 type IEventHandlerParams =
   | {
-      event: TabEvent.OnActivated;
+      event: ITabEvent.OnActivated;
       rawParams: { activeInfo: chrome.tabs.TabActiveInfo };
     }
   | {
-      event: TabEvent.OnAttached;
+      event: ITabEvent.OnAttached;
       rawParams: { tabId: number; attachInfo: chrome.tabs.TabAttachInfo };
     }
   | {
-      event: TabEvent.OnCreated;
+      event: ITabEvent.OnCreated;
       rawParams: { tab: chrome.tabs.Tab };
     }
   | {
-      event: TabEvent.OnDetached;
+      event: ITabEvent.OnDetached;
       rawParams: { tabId: number; detachInfo: chrome.tabs.TabDetachInfo };
     }
   | {
-      event: TabEvent.OnHighlighted;
+      event: ITabEvent.OnHighlighted;
       rawParams: { highlightInfo: chrome.tabs.TabHighlightInfo };
     }
   | {
-      event: TabEvent.OnMoved;
+      event: ITabEvent.OnMoved;
       rawParams: { tabId: number; moveInfo: chrome.tabs.TabMoveInfo };
     }
   | {
-      event: TabEvent.OnRemoved;
+      event: ITabEvent.OnRemoved;
       rawParams: { tabId: number; removeInfo: chrome.tabs.TabRemoveInfo };
     }
   | {
-      event: TabEvent.OnUpdated;
+      event: ITabEvent.OnUpdated;
       rawParams: { tabId: number; changeInfo: chrome.tabs.TabChangeInfo; tab: chrome.tabs.Tab };
     };
 ```
