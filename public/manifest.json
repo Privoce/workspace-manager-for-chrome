@@ -1,19 +1,29 @@
 {
-  "name": "Workspace Manager",
-  "description": "A simple demo extension of workspace API.",
-  "version": "1.2",
+  "name": "Webpack Boilerplate",
+  "description": "a good starting point for using webpack to build stuffs, including Chrome extensions",
+  "version": "0.0.1",
   "manifest_version": 3,
   "icons": {
-    "512": "icon.png"
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
   },
-  "action": {
-    "default_icon": "icon.png"
-  },
+  "action": {},
   "background": {
     "service_worker": "background.bundle.js"
   },
-  "permissions": [
-    "tabs",
-    "webNavigation"
-  ]
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "contentScript.bundle.js"
+      ]
+    }
+  ],
+  "options_page": "options.html",
+  "chrome_url_overrides": {
+    "newtab": "newTab.html"
+  }
 }

@@ -1,6 +1,8 @@
-/.idea
-/node_modules
-/.awcache
-/dist
 /.husky
+/.idea
 /build
+/node_modules
+/utils
+/packages/**/*/dist
+/packages/**/*/node_modules
+/packages/**/*/utils
